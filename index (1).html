@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Живая озвучка</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800;900&family=Nunito+Sans:wght@300;400;600&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #fdf9f3;
+  --surface: #ffffff;
+  --surface2: #f7f2ea;
+  --border: #e8dfd0;
+  --border2: #d4c9b5;
+  --accent: #f97316;
+  --accent2: #8b5cf6;
+  --accent3: #10b981;
+  --accent4: #ec4899;
+  --text: #2d2417;
+  --muted: #9d8f7e;
+  --shadow: rgba(45,36,23,0.08);
+  --shadow2: rgba(45,36,23,0.15);
+}
+
+body {
+  font-family: 'Nunito Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 32px 16px 60px;
+  position: relative;
+}
+
+/* Decorative dots pattern */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(circle, #e8dfd0 1px, transparent 1px);
+  background-size: 28px 28px;
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+/* HEADER */
+header {
+  text-align: center;
+  margin-bottom: 36px;
+  animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+
+.emoji-title {
+  font-size: 52px;
+  display: block;
+  margin-bottom: 8px;
+  animation: wobble 3s ease-in-out infinite;
+}
+
+@keyframes wobble {
+  0%,100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+
+h1 {
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(26px, 5vw, 38px);
+  font-weight: 900;
+  color: var(--text);
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
+}
+
+h1 span { color: var(--accent); }
+
+.subtitle {
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 400;
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.9) translateY(-10px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* CARD */
+.card {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 24px;
+  padding: 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 20px var(--shadow);
+  animation: slideUp 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+.card:nth-child(1) { animation-delay: 0.05s; }
+.card:nth-child(2) { animation-delay: 0.1s; }
+.card:nth-child(3) { animation-delay: 0.15s; }
+.card:nth-child(4) { animation-delay: 0.2s; }
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.card-title {
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card-title-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+/* API KEY */
+.api-row {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.api-input {
+  flex: 1;
+  background: var(--surface2);
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  color: var(--text);
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  padding: 12px 16px;
+  outline: none;
+  transition: border-color 0.2s;
+  letter-spacing: 0.5px;
+}
+.api-input:focus { border-color: var(--accent2); }
+.api-input::placeholder { color: var(--muted); letter-spacing: 0; }
+
+.btn-small {
+  background: var(--surface2);
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  color: var(--text);
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 12px 18px;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.btn-small:hover { border-color: var(--accent2); color: var(--accent2); }
+
+.api-hint {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.api-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 20px;
+  margin-left: 6px;
+}
+.api-status.ok { background: #d1fae5; color: #065f46; }
+.api-status.err { background: #fee2e2; color: #991b1b; }
+
+/* VOICES GRID */
+.voices-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.voice-card {
+  background: var(--surface2);
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  padding: 14px 12px;
+  cursor: pointer;
+  transition: all 0.15s cubic-bezier(0.34,1.56,0.64,1);
+  text-align: center;
+  position: relative;
+}
+.voice-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--shadow2); }
+.voice-card.selected {
+  border-color: var(--accent);
+  background: #fff7ed;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(249,115,22,0.2);
+}
+.voice-card .vc-emoji { font-size: 28px; display: block; margin-bottom: 6px; }
+.voice-card .vc-name {
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+.voice-card .vc-tag {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.voice-card.selected .vc-name { color: var(--accent); }
+.voice-card .vc-check {
+  position: absolute;
+  top: 8px; right: 10px;
+  width: 18px; height: 18px;
+  background: var(--accent);
+  border-radius: 50%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: white;
+}
+.voice-card.selected .vc-check { display: flex; }
+
+.voices-loading {
+  text-align: center;
+  color: var(--muted);
+  padding: 24px;
+  font-size: 14px;
+}
+.voices-error {
+  text-align: center;
+  color: #ef4444;
+  padding: 20px;
+  font-size: 14px;
+  background: #fef2f2;
+  border-radius: 14px;
+}
+
+/* SETTINGS ROW */
+.settings-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.setting-item label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.setting-item .val {
+  float: right;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+input[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 5px;
+  background: var(--border);
+  border-radius: 5px;
+  outline: none;
+  cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 3px solid white;
+  box-shadow: 0 2px 8px var(--shadow2);
+  transition: transform 0.15s;
+}
+input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+/* MODEL SELECT */
+.model-row {
+  margin-top: 14px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.model-btn {
+  background: var(--surface2);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  color: var(--muted);
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 7px 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.model-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+.model-btn.active { background: #ede9fe; border-color: var(--accent2); color: var(--accent2); }
+
+/* TEXT INPUT */
+textarea {
+  width: 100%;
+  min-height: 160px;
+  background: var(--surface2);
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  color: var(--text);
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.7;
+  padding: 16px 18px;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s;
+}
+textarea:focus { border-color: var(--accent2); }
+textarea::placeholder { color: var(--muted); }
+
+.text-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.quick-btns {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.quick-btn {
+  background: var(--surface2);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  color: var(--muted);
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.quick-btn:hover { border-color: var(--accent); color: var(--accent); background: #fff7ed; }
+
+.char-count { font-size: 12px; color: var(--muted); }
+
+/* BIG PLAY BTN */
+.play-section {
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+  margin-top: 6px;
+}
+
+.btn-play {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--accent);
+  border: none;
+  border-radius: 18px;
+  color: white;
+  font-family: 'Nunito', sans-serif;
+  font-size: 16px;
+  font-weight: 900;
+  padding: 18px 28px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+  letter-spacing: 0.3px;
+  box-shadow: 0 6px 24px rgba(249,115,22,0.3);
+  position: relative;
+  overflow: hidden;
+}
+.btn-play::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0);
+  transition: background 0.2s;
+}
+.btn-play:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 32px rgba(249,115,22,0.4); }
+.btn-play:hover::after { background: rgba(255,255,255,0.1); }
+.btn-play:active { transform: scale(0.97); }
+.btn-play:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn-play.loading { background: var(--accent2); box-shadow: 0 6px 24px rgba(139,92,246,0.3); }
+.btn-play.loading:hover { box-shadow: 0 10px 32px rgba(139,92,246,0.4); }
+
+.btn-stop {
+  background: var(--surface2);
+  border: 2px solid var(--border);
+  border-radius: 18px;
+  color: var(--text);
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 18px 20px;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-stop:hover { border-color: #ef4444; color: #ef4444; }
+.btn-stop:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* AUDIO PLAYER */
+.audio-player {
+  display: none;
+  margin-top: 16px;
+  flex-direction: column;
+  gap: 12px;
+}
+.audio-player.show { display: flex; }
+
+audio {
+  width: 100%;
+  height: 44px;
+  border-radius: 12px;
+  outline: none;
+}
+
+.download-row {
+  display: flex;
+  gap: 10px;
+}
+.btn-download {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--accent3);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-decoration: none;
+}
+.btn-download:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(16,185,129,0.3); }
+
+/* STATUS */
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 12px;
+  transition: all 0.3s;
+}
+.status-bar.idle { background: var(--surface2); color: var(--muted); }
+.status-bar.loading { background: #ede9fe; color: var(--accent2); }
+.status-bar.success { background: #d1fae5; color: #065f46; }
+.status-bar.error { background: #fee2e2; color: #991b1b; }
+
+.spinner {
+  width: 14px; height: 14px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* HISTORY */
+.history-list { display: flex; flex-direction: column; gap: 8px; }
+
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--surface2);
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.history-item:hover { border-color: var(--accent); background: #fff7ed; }
+.history-item .h-emoji { font-size: 18px; flex-shrink: 0; }
+.history-item .h-text { flex: 1; font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.history-item .h-voice { font-size: 11px; color: var(--muted); font-weight: 600; flex-shrink: 0; }
+.history-item .h-play {
+  background: var(--accent);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-family: 'Nunito', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+.history-item .h-play:hover { transform: scale(1.05); }
+
+.history-empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 24px;
+  font-size: 14px;
+}
+
+/* CREDITS BADGE */
+.credits-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fef3c7;
+  border: 1px solid #fcd34d;
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #92400e;
+}
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--text);
+  color: white;
+  border-radius: 14px;
+  padding: 12px 22px;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 8px 30px var(--shadow2);
+  transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  z-index: 999;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <span class="emoji-title">🎙️</span>
+    <h1>Живая <span>озвучка</span></h1>
+    <p class="subtitle">Настоящие голоса для мультиков — дети, взрослые, персонажи</p>
+  </header>
+
+  <!-- VOICES -->
+  <div class="card">
+    <div class="card-title" style="justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="card-title-dot" style="background:var(--accent4)"></div> Голос
+      </div>
+      <span id="creditsInfo" style="display:none"></span>
+    </div>
+    <div class="voices-grid" id="voicesGrid">
+      <div class="voices-loading">🔑 Введи ключ чтобы загрузить голоса</div>
+    </div>
+    <div class="settings-row">
+      <div class="setting-item">
+        <label>Стабильность <span class="val" id="stabilityVal">0.5</span></label>
+        <input type="range" id="stabilitySlider" min="0" max="1" step="0.05" value="0.5"
+          oninput="document.getElementById('stabilityVal').textContent = parseFloat(this.value).toFixed(2)">
+      </div>
+      <div class="setting-item">
+        <label>Похожесть <span class="val" id="similarityVal">0.75</span></label>
+        <input type="range" id="similaritySlider" min="0" max="1" step="0.05" value="0.75"
+          oninput="document.getElementById('similarityVal').textContent = parseFloat(this.value).toFixed(2)">
+      </div>
+    </div>
+    <div class="model-row">
+      <span style="font-size:12px;font-weight:700;color:var(--muted);align-self:center;text-transform:uppercase;letter-spacing:1px;">Модель:</span>
+      <button class="model-btn active" onclick="selectModel('eleven_multilingual_v2', this)">Multilingual v2</button>
+      <button class="model-btn" onclick="selectModel('eleven_turbo_v2_5', this)">Turbo (быстро)</button>
+      <button class="model-btn" onclick="selectModel('eleven_flash_v2_5', this)">Flash (экономно)</button>
+    </div>
+  </div>
+
+  <!-- 3. TEXT + PLAY -->
+  <div class="card">
+    <div class="card-title"><div class="card-title-dot" style="background:var(--accent2)"></div> Текст</div>
+    <textarea id="textInput" placeholder="Привет! Я маленький дракончик и я боюсь огня… но сегодня всё изменится!"></textarea>
+    <div class="text-bottom">
+      <div class="quick-btns">
+        <button class="quick-btn" onclick="setExample(1)">🐉 Дракон</button>
+        <button class="quick-btn" onclick="setExample(2)">🧙 Волшебник</button>
+        <button class="quick-btn" onclick="setExample(3)">🚀 Космос</button>
+        <button class="quick-btn" onclick="clearText()">✕</button>
+      </div>
+      <span class="char-count" id="charCount">0 симв.</span>
+    </div>
+
+    <div class="play-section" style="margin-top:16px;">
+      <button class="btn-play" id="playBtn" onclick="generate()">
+        <span id="playIcon">✨</span>
+        <span id="playLabel">Озвучить</span>
+      </button>
+      <button class="btn-stop" id="stopBtn" onclick="stopAudio()" disabled>⏹</button>
+    </div>
+
+    <div class="status-bar idle" id="statusBar">
+      <span id="statusIcon">🎙️</span>
+      <span id="statusText">Готово — выбери голос и введи текст</span>
+    </div>
+
+    <div class="audio-player" id="audioPlayer">
+      <audio controls id="audioEl"></audio>
+      <div class="download-row">
+        <a class="btn-download" id="downloadBtn" download="озвучка.mp3">
+          ⬇️ Скачать MP3
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. HISTORY -->
+  <div class="card">
+    <div class="card-title"><div class="card-title-dot" style="background:var(--accent3)"></div> История</div>
+    <div class="history-list" id="historyList">
+      <div class="history-empty">Здесь появятся твои озвучки 🎵</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"><span id="toastIcon">✓</span><span id="toastText"></span></div>
+
+<script>
+const FIXED_KEY = 'sk_25a730f970444316f51981c7b6f644c9cc062a97cb359f48';
+let selectedVoiceId = null;
+let selectedVoiceName = '';
+let selectedModel = 'eleven_multilingual_v2';
+let audioBlob = null;
+let audioUrl = null;
+let isGenerating = false;
+let history = JSON.parse(localStorage.getItem('el-history') || '[]');
+
+// ─── FREE DEFAULT VOICES ────────────────────────
+// These are ElevenLabs built-in voices available on free plan
+const FREE_VOICES = [
+  { emoji: '👨', name: 'Adam', tag: 'Мужской·глубокий', id: 'pNInz6obpgDQGcFmaJgB' },
+  { emoji: '👩', name: 'Rachel', tag: 'Женский·мягкий', id: '21m00Tcm4TlvDq8ikWAM' },
+  { emoji: '🎭', name: 'Domi', tag: 'Женский·уверенный', id: 'AZnzlk1XvdvUeBnXmlld' },
+  { emoji: '📖', name: 'Bella', tag: 'Женский·нежный', id: 'EXAVITQu4vr4xnSDxMaL' },
+  { emoji: '🦁', name: 'Antoni', tag: 'Мужской·тёплый', id: 'ErXwobaYiN019PkySvjV' },
+  { emoji: '🧙', name: 'Elli', tag: 'Женский·молодой', id: 'MF3mGyEYCl7XYWbV9V6O' },
+  { emoji: '🎙️', name: 'Josh', tag: 'Мужской·молодой', id: 'TxGEqnHWrfWFTfGW9XjX' },
+  { emoji: '👴', name: 'Arnold', tag: 'Мужской·зрелый', id: 'VR6AewLTigWG4xSOukaG' },
+  { emoji: '🎬', name: 'Sam', tag: 'Мужской·резкий', id: 'yoZ06aMxZJJ28mfd3POQ' },
+];
+
+// ─── API KEY ────────────────────────────────────
+function getKey() { return FIXED_KEY; }
+
+// ─── LOAD VOICES ────────────────────────────────
+async function loadVoices(key) {
+  const grid = document.getElementById('voicesGrid');
+  grid.innerHTML = '<div class="voices-loading"><div style="display:inline-block;width:20px;height:20px;border:2px solid #ccc;border-top-color:var(--accent2);border-radius:50%;animation:spin 0.7s linear infinite;margin-right:8px;vertical-align:middle"></div>Загружаю голоса…</div>';
+
+  try {
+    const res = await fetch('https://api.elevenlabs.io/v1/voices', {
+      headers: { 'xi-api-key': key }
+    });
+
+    if (!res.ok) {
+      throw new Error(res.status === 401 ? 'Неверный ключ' : 'Ошибка ' + res.status);
+    }
+
+    const data = await res.json();
+
+    // Try get user info
+    try {
+      const uRes = await fetch('https://api.elevenlabs.io/v1/user/subscription', { headers: { 'xi-api-key': key } });
+      if (uRes.ok) {
+        const u = await uRes.json();
+        const left = u.character_limit - u.character_count;
+        const creditsEl = document.getElementById('creditsInfo');
+        if (creditsEl) {
+          creditsEl.innerHTML = `<span class="credits-badge">💬 ${left.toLocaleString()} символов осталось</span>`;
+          creditsEl.style.display = 'inline-block';
+        }
+      }
+    } catch(e) {}
+
+    renderVoices(data.voices || []);
+
+  } catch(e) {
+    grid.innerHTML = `<div class="voices-error">❌ ${e.message}<br><small>Попробуй обновить страницу</small></div>`;
+    renderCuratedOnly();
+  }
+}
+
+function renderVoices(apiVoices) {
+  const grid = document.getElementById('voicesGrid');
+  let html = '';
+
+  // Show free built-in voices first
+  const freeIds = FREE_VOICES.map(v => v.id);
+  html += `<div style="grid-column:1/-1;font-size:11px;font-weight:800;letter-spacing:1px;color:var(--muted);text-transform:uppercase;margin-top:6px;">🎙️ Стандартные голоса (бесплатно)</div>`;
+  FREE_VOICES.forEach(v => { html += voiceCardHtml(v.id, v.emoji, v.name, v.tag); });
+
+  // Then any custom voices from the account (cloned, generated, etc.)
+  const extra = apiVoices.filter(v => !freeIds.includes(v.voice_id) && v.category !== 'premade').slice(0, 12);
+  if (extra.length) {
+    html += `<div style="grid-column:1/-1;font-size:11px;font-weight:800;letter-spacing:1px;color:var(--muted);text-transform:uppercase;margin-top:10px;">⭐ Твои голоса</div>`;
+    extra.forEach(v => {
+      const cat = v.labels?.gender === 'female' ? '👩' : v.labels?.age === 'young' ? '🧒' : '👨';
+      html += voiceCardHtml(v.voice_id, cat, v.name, v.labels?.use_case || 'Голос');
+    });
+  }
+
+  grid.innerHTML = html;
+  const firstCard = grid.querySelector('.voice-card');
+  if (firstCard) firstCard.click();
+}
+
+function renderCuratedOnly() {
+  const grid = document.getElementById('voicesGrid');
+  let html = `<div style="grid-column:1/-1;background:#fef3c7;border-radius:12px;padding:10px 14px;font-size:12px;color:#92400e;font-weight:600;margin-bottom:8px;">⚠️ Введи ключ чтобы активировать голоса</div>`;
+  FREE_VOICES.forEach(v => { html += voiceCardHtml(v.id, v.emoji, v.name, v.tag); });
+  grid.innerHTML = html;
+}
+
+function voiceCardHtml(id, emoji, name, tag) {
+  return `<div class="voice-card" data-id="${id}" data-name="${name}" onclick="selectVoice(this)">
+    <span class="vc-emoji">${emoji}</span>
+    <div class="vc-name">${name}</div>
+    <div class="vc-tag">${tag}</div>
+    <div class="vc-check">✓</div>
+  </div>`;
+}
+
+function selectVoice(el) {
+  document.querySelectorAll('.voice-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedVoiceId = el.dataset.id;
+  selectedVoiceName = el.dataset.name;
+}
+
+// ─── MODEL ──────────────────────────────────────
+function selectModel(id, btn) {
+  selectedModel = id;
+  document.querySelectorAll('.model-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ─── TEXT ───────────────────────────────────────
+document.getElementById('textInput').addEventListener('input', function() {
+  document.getElementById('charCount').textContent = this.value.length + ' симв.';
+});
+
+function setExample(n) {
+  const ex = {
+    1: 'Эй! Привет, я — маленький дракончик Огонёк. Все думают, что я умею дышать огнём, но это неправда! Зато я умею дышать… радугой! Удивлён? Вот и весь лес тоже удивился!',
+    2: 'Слушайте внимательно, дети! Я — волшебник Архимед Пузырьков, и сегодня я покажу вам самое невероятное заклинание в мире. Только тсс! Никому не говорите…',
+    3: 'Три, два, один — поехали! Привет, Земля! Я — капитан Зойка, и я только что приземлилась на Луну. Тут всё серебристое и очень-очень тихое. Подождите — что это за следы?!',
+  };
+  document.getElementById('textInput').value = ex[n];
+  document.getElementById('charCount').textContent = ex[n].length + ' симв.';
+}
+
+function clearText() {
+  document.getElementById('textInput').value = '';
+  document.getElementById('charCount').textContent = '0 симв.';
+}
+
+// ─── GENERATE ───────────────────────────────────
+async function generate() {
+  if (isGenerating) return;
+
+  const text = document.getElementById('textInput').value.trim();
+  const key  = getKey();
+
+  if (!key) { toast('🔑', 'Введи API-ключ ElevenLabs!'); return; }
+  if (!text) { toast('✏️', 'Введи текст для озвучки!'); return; }
+  if (!selectedVoiceId) { toast('🎙️', 'Выбери голос!'); return; }
+
+  isGenerating = true;
+  setStatus('loading', '⏳', 'Генерирую аудио…');
+  document.getElementById('playBtn').classList.add('loading');
+  document.getElementById('playBtn').disabled = true;
+  document.getElementById('playIcon').textContent = '⏳';
+  document.getElementById('playLabel').textContent = 'Генерирую…';
+  document.getElementById('stopBtn').disabled = false;
+  document.getElementById('audioPlayer').classList.remove('show');
+
+  try {
+    const stability  = parseFloat(document.getElementById('stabilitySlider').value);
+    const similarity = parseFloat(document.getElementById('similaritySlider').value);
+
+    const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${selectedVoiceId}`, {
+      method: 'POST',
+      headers: {
+        'xi-api-key': key,
+        'Content-Type': 'application/json',
+        'Accept': 'audio/mpeg',
+      },
+      body: JSON.stringify({
+        text,
+        model_id: selectedModel,
+        voice_settings: { stability, similarity_boost: similarity }
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail?.message || err.detail || 'Ошибка ' + res.status);
+    }
+
+    audioBlob = await res.blob();
+    if (audioUrl) URL.revokeObjectURL(audioUrl);
+    audioUrl = URL.createObjectURL(audioBlob);
+
+    const audio = document.getElementById('audioEl');
+    audio.src = audioUrl;
+    audio.play();
+
+    document.getElementById('downloadBtn').href = audioUrl;
+    document.getElementById('downloadBtn').download = `озвучка_${selectedVoiceName}.mp3`;
+    document.getElementById('audioPlayer').classList.add('show');
+
+    setStatus('success', '✅', `Готово! Голос: ${selectedVoiceName}`);
+    addToHistory(text, selectedVoiceName, audioUrl);
+    renderHistory();
+    toast('🎉', 'Озвучка готова!');
+
+  } catch(e) {
+    setStatus('error', '❌', e.message);
+    toast('❌', e.message);
+  }
+
+  isGenerating = false;
+  document.getElementById('playBtn').classList.remove('loading');
+  document.getElementById('playBtn').disabled = false;
+  document.getElementById('playIcon').textContent = '✨';
+  document.getElementById('playLabel').textContent = 'Озвучить';
+  document.getElementById('stopBtn').disabled = true;
+}
+
+function stopAudio() {
+  document.getElementById('audioEl').pause();
+  document.getElementById('audioEl').currentTime = 0;
+  document.getElementById('stopBtn').disabled = true;
+  setStatus('idle', '🎙️', 'Остановлено');
+}
+
+function setStatus(type, icon, text) {
+  const bar = document.getElementById('statusBar');
+  bar.className = 'status-bar ' + type;
+  document.getElementById('statusIcon').textContent = type === 'loading'
+    ? '' : icon;
+  if (type === 'loading') {
+    document.getElementById('statusIcon').innerHTML = '<div class="spinner"></div>';
+  }
+  document.getElementById('statusText').textContent = text;
+}
+
+// ─── HISTORY ────────────────────────────────────
+function addToHistory(text, voice, url) {
+  history.unshift({ text: text.slice(0, 80), voice, url, ts: Date.now() });
+  history = history.slice(0, 8);
+  // Don't persist URLs (they're blob and expire)
+  const toSave = history.map(h => ({ text: h.text, voice: h.voice, ts: h.ts }));
+  localStorage.setItem('el-history', JSON.stringify(toSave));
+}
+
+function renderHistory() {
+  const list = document.getElementById('historyList');
+  if (!history.length) {
+    list.innerHTML = '<div class="history-empty">Здесь появятся твои озвучки 🎵</div>';
+    return;
+  }
+  list.innerHTML = history.map((h, i) => `
+    <div class="history-item">
+      <span class="h-emoji">🎙️</span>
+      <span class="h-text">${h.text}…</span>
+      <span class="h-voice">${h.voice}</span>
+      ${h.url ? `<button class="h-play" onclick="replayHistory(${i})">▶ Играть</button>` : ''}
+    </div>
+  `).join('');
+}
+
+function replayHistory(i) {
+  const h = history[i];
+  if (!h.url) { toast('ℹ️', 'Нужно озвучить заново'); return; }
+  const audio = document.getElementById('audioEl');
+  audio.src = h.url;
+  audio.play();
+  document.getElementById('audioPlayer').classList.add('show');
+}
+
+renderHistory();
+
+// ─── TOAST ──────────────────────────────────────
+function toast(icon, msg) {
+  document.getElementById('toastIcon').textContent = icon;
+  document.getElementById('toastText').textContent = msg;
+  const el = document.getElementById('toast');
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+// ─── INIT ───────────────────────────────────────
+loadVoices(FIXED_KEY);
+</script>
+</body>
+</html>
